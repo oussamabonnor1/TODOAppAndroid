@@ -34,15 +34,16 @@ public class SQLiteHelperMine extends SQLiteOpenHelper {
         value.put(dbCulumnName, taskName);
         SQLiteDatabase db = getWritableDatabase();
         db.insert(dbTableName, null, value);
+
     }
 
     public void removeTask(String taskName) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("DELETE FROM " + dbTableName + "WHERE " + dbCulumnName + "=\"" + taskName + "\";");
+        db.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbCulumnName + "=\"" + taskName + "\";");
     }
 
     public String readFromDB() {
-        String result = "";
+        String result = " ";
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + dbTableName;
         Cursor c = db.rawQuery(query, null);
@@ -60,6 +61,7 @@ public class SQLiteHelperMine extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS" + dbTableName);
+        onCreate(sqLiteDatabase);
     }
 }
