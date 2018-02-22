@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Data base</string>
+    <string-array name="options">
+        <item>Food</item>
+        <item>Dring</item>
+        <item>Other</item>
+    </string-array>
+</resources>
