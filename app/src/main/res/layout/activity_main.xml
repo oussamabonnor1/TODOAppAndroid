@@ -18,7 +18,7 @@
             android:id="@+id/textField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_margin="10dp"
             android:hint="Insert item here"
             android:textAlignment="center" />
 
@@ -26,8 +26,7 @@
             android:id="@+id/addButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_margin="10dp"
             android:background="#8273B5"
             android:onClick="addTask"
             android:text="Add Item"
@@ -37,9 +36,7 @@
             android:id="@+id/removeNutton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_margin="10dp"
             android:background="#8273B5"
             android:onClick="removeTask"
             android:text="Remove Item"
@@ -49,31 +46,19 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="15dp"
-        android:layout_weight=".7"
-        android:background="#544785">
+        android:layout_weight=".6">
 
-        <ScrollView
+        <ListView
+            android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:textAlignment="center">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textColor="@color/colorAccent"
-                    android:textSize="25sp" />
-            </LinearLayout>
-        </ScrollView>
+        </ListView>
 
     </LinearLayout>
 </LinearLayout>

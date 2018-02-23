@@ -1,10 +1,14 @@
 package com.miamme.jetlightstudio.foodapp;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.ArrayAdapter;
+
+import java.util.ArrayList;
 
 /**
  * Created by oussama on 22/02/2018.
@@ -42,8 +46,8 @@ public class SQLiteHelperMine extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbCulumnName + "=\"" + taskName + "\";");
     }
 
-    public String readFromDB() {
-        String result = " ";
+    public ArrayAdapter<String> readFromDB(Context context) {
+        ArrayList<String> tastksTemp = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + dbTableName;
         Cursor c = db.rawQuery(query, null);
@@ -51,10 +55,11 @@ public class SQLiteHelperMine extends SQLiteOpenHelper {
 
         while (!c.isAfterLast()) {
             if (c.getString(c.getColumnIndex(dbCulumnName)) != null) {
-                result += c.getString(c.getColumnIndex(dbCulumnName)) + "\n";
+                tastksTemp.add(c.getString(c.getColumnIndex(dbCulumnName)));
             }
             c.moveToNext();
         }
+        ArrayAdapter<String> result = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tastksTemp);
         db.close();
         return result;
     }

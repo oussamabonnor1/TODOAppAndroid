@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -12,6 +13,7 @@ public class MainActivity extends AppCompatActivity {
     Button add, remove;
     TextView tasks;
     SQLiteHelperMine helper;
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,8 +22,9 @@ public class MainActivity extends AppCompatActivity {
         textField = (EditText) findViewById(R.id.textField);
         add = (Button) findViewById(R.id.addButton);
         remove = (Button) findViewById(R.id.removeNutton);
-        tasks = (TextView) findViewById(R.id.textView);
-        helper = new SQLiteHelperMine(this,null,null,1);
+        //tasks = (TextView) findViewById(R.id.textView);
+        listView = (ListView) findViewById(R.id.listView);
+        helper = new SQLiteHelperMine(this, null, null, 1);
         printDB();
     }
 
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void printDB() {
-        tasks.setText(helper.readFromDB());
+        listView.setAdapter(helper.readFromDB(this));
         textField.setText("");
     }
 }
