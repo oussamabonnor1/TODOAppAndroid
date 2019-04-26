@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -13,8 +14,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     EditText textField;
-    Button add, remove;
-    TextView tasks;
+    Button add;
     SQLiteHelperMine helper;
     ListView listView;
 
@@ -24,20 +24,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         textField = (EditText) findViewById(R.id.textField);
         add = (Button) findViewById(R.id.addButton);
-        remove = (Button) findViewById(R.id.removeNutton);
         //tasks = (TextView) findViewById(R.id.textView);
         listView = (ListView) findViewById(R.id.listView);
         helper = new SQLiteHelperMine(this, null, null, 1);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                helper.removeTask(listView.getAdapter().getItem(position).toString());
+                printDB();
+                return false;
+            }
+        });
         printDB();
     }
 
     public void addTask(View v) {
         helper.addTask(textField.getText().toString());
-        printDB();
-    }
-
-    public void removeTask(View v) {
-        helper.removeTask(textField.getText().toString());
         printDB();
     }
 
