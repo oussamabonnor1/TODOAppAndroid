@@ -7,7 +7,7 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical"
     android:weightSum="1"
-    tools:context="com.miamme.jetlightstudio.foodapp.ToDoListActivity">
+    tools:context="com.miamme.jetlightstudio.foodapp.Controllers.ToDoListActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,33 +28,45 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".75"
-        android:orientation="vertical">
+        android:layout_weight=".8"
+        android:orientation="vertical"
+        android:weightSum=".9">
+
+        <EditText
+            android:id="@+id/editTextAddTask"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_weight=".1"
+            android:hint="Add task..."
+            android:textColor="@color/colorText" />
 
         <ListView
             android:id="@+id/listTodo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
+            android:layout_weight=".8"
             android:divider="@android:color/transparent"
             android:dividerHeight="20dp"
             android:paddingBottom="20dp"
             android:paddingTop="20dp" />
     </LinearLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight=".15"
-        android:orientation="vertical">
+        android:layout_weight=".1"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <Button
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_centerInParent="true"
             android:background="@drawable/round_button"
             android:foreground="@drawable/add_button"
             android:onClick="addTask" />
-    </RelativeLayout>
+    </LinearLayout>
 </LinearLayout>

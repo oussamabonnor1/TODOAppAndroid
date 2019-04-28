@@ -1,4 +1,4 @@
-package com.miamme.jetlightstudio.foodapp;
+package com.miamme.jetlightstudio.foodapp.Controllers;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,19 +8,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
+import com.miamme.jetlightstudio.foodapp.R;
+import com.miamme.jetlightstudio.foodapp.Toolbox.SQLiteToDoTable;
+
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ToDoListActivity extends AppCompatActivity {
 
-    SQLiteHelperMine helper;
+    SQLiteToDoTable helper;
     ListView listView;
     TextView activityTitle;
+    EditText addTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +35,10 @@ public class ToDoListActivity extends AppCompatActivity {
         activityTitle = (TextView) findViewById(R.id.activityTitle);
         activityTitle.setText(getIntent().getStringExtra("listName"));
 
+        addTask = (EditText) findViewById(R.id.editTextAddTask);
+
         listView = (ListView) findViewById(R.id.listTodo);
-        helper = new SQLiteHelperMine(this, null, null, 1);
+        helper = new SQLiteToDoTable(this, null, null, 1);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
@@ -44,13 +51,14 @@ public class ToDoListActivity extends AppCompatActivity {
     }
 
     public void addTask(View v) {
-        //helper.addTask(textField.getText().toString());
+        helper.addTask(false, addTask.getText().toString());
         printDB();
     }
 
     public void printDB() {
         CustumAdapter custumAdapter = new CustumAdapter(helper.readFromDB());
         listView.setAdapter(custumAdapter);
+        addTask.setText("");
     }
 
     @Override
@@ -69,7 +77,7 @@ public class ToDoListActivity extends AppCompatActivity {
     }
 
     public class CustumAdapter extends BaseAdapter {
-        ArrayList<String> todoList;
+        ArrayList<TodoItem> todoList;
 
         public CustumAdapter(ArrayList todoList) {
             this.todoList = todoList;
@@ -94,9 +102,9 @@ public class ToDoListActivity extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.task_todo_item, null);
             final TextView title = view.findViewById(R.id.todoName);
-            title.setText(todoList.get(i));
+            title.setText(todoList.get(i).getTaskName());
             RadioButton button = view.findViewById(R.id.radioButton);
-            button.setChecked(new Random().nextBoolean());
+            button.setChecked(todoList.get(i).isStatus());
             return view;
         }
 

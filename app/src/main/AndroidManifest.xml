@@ -9,13 +9,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
-            android:name=".ToDoListActivity"
+            android:name=".Controllers.ToDoListActivity"
             android:label="tasks"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
         <activity
-            android:name=".ListMenuActivity"
+            android:name=".Controllers.ListMenuActivity"
             android:label="List"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>

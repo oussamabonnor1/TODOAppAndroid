@@ -1,12 +1,12 @@
-package com.miamme.jetlightstudio.foodapp;
+package com.miamme.jetlightstudio.foodapp.Toolbox;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.ArrayAdapter;
+
+import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
 
 import java.util.ArrayList;
 
@@ -14,27 +14,28 @@ import java.util.ArrayList;
  * Created by oussama on 22/02/2018.
  */
 
-public class SQLiteHelperMine extends SQLiteOpenHelper {
+public class SQLiteToDoTable extends SQLiteOpenHelper {
 
     private static final int dbVersion = 1;
     private static final String dbName = "task.db";
     public static final String dbTableName = "task";
-    public static final String dbCulumnID = "_id";
+    public static final String dbCulumnStatus = "status";
     public static final String dbCulumnName = "taskName";
 
-    public SQLiteHelperMine(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public SQLiteToDoTable(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, dbName, factory, dbVersion);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String query = "Create Table " + dbTableName +
-                " (" + dbCulumnID + " Integer Primary Key Autoincrement, " + dbCulumnName + " Text " + ");";
+                " (" + dbCulumnStatus + " Boolean, " + dbCulumnName + " Text " + ");";
         sqLiteDatabase.execSQL(query);
     }
 
-    public void addTask(String taskName) {
+    public void addTask(boolean status, String taskName) {
         ContentValues value = new ContentValues();
+        value.put(dbCulumnStatus, status);
         value.put(dbCulumnName, taskName);
         SQLiteDatabase db = getWritableDatabase();
         db.insert(dbTableName, null, value);
@@ -46,8 +47,8 @@ public class SQLiteHelperMine extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbCulumnName + "=\"" + taskName + "\";");
     }
 
-    public ArrayList<String> readFromDB() {
-        ArrayList<String> tastksTemp = new ArrayList<>();
+    public ArrayList<TodoItem> readFromDB() {
+        ArrayList<TodoItem> tastksTemp = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + dbTableName;
         Cursor c = db.rawQuery(query, null);
@@ -55,14 +56,14 @@ public class SQLiteHelperMine extends SQLiteOpenHelper {
 
         while (!c.isAfterLast()) {
             if (c.getString(c.getColumnIndex(dbCulumnName)) != null) {
-                tastksTemp.add(c.getString(c.getColumnIndex(dbCulumnName)));
-                System.out.println(tastksTemp.get(tastksTemp.size() - 1));
+                TodoItem item = new TodoItem(c.getString(c.getColumnIndex(dbCulumnName)),
+                        Boolean.getBoolean(c.getString(c.getColumnIndex(dbCulumnStatus))));
+                tastksTemp.add(item);
             }
             c.moveToNext();
         }
-        ArrayList<String> result = new ArrayList<>(tastksTemp);
         db.close();
-        return result;
+        return tastksTemp;
     }
 
     @Override

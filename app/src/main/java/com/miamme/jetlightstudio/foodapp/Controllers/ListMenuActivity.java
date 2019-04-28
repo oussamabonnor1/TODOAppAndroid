@@ -1,4 +1,4 @@
-package com.miamme.jetlightstudio.foodapp;
+package com.miamme.jetlightstudio.foodapp.Controllers;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,10 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.miamme.jetlightstudio.foodapp.R;
 
 import java.util.ArrayList;
 
