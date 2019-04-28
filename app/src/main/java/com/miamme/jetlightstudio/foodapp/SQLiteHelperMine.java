@@ -46,7 +46,7 @@ public class SQLiteHelperMine extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbCulumnName + "=\"" + taskName + "\";");
     }
 
-    public ArrayAdapter<String> readFromDB(Context context) {
+    public ArrayList<String> readFromDB() {
         ArrayList<String> tastksTemp = new ArrayList<>();
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + dbTableName;
@@ -56,10 +56,11 @@ public class SQLiteHelperMine extends SQLiteOpenHelper {
         while (!c.isAfterLast()) {
             if (c.getString(c.getColumnIndex(dbCulumnName)) != null) {
                 tastksTemp.add(c.getString(c.getColumnIndex(dbCulumnName)));
+                System.out.println(tastksTemp.get(tastksTemp.size() - 1));
             }
             c.moveToNext();
         }
-        ArrayAdapter<String> result = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, tastksTemp);
+        ArrayList<String> result = new ArrayList<>(tastksTemp);
         db.close();
         return result;
     }

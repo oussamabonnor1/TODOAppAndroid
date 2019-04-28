@@ -1,6 +1,5 @@
 package com.miamme.jetlightstudio.foodapp;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,15 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class ToDoListActivity extends AppCompatActivity {
 
@@ -33,7 +30,7 @@ public class ToDoListActivity extends AppCompatActivity {
         activityTitle = (TextView) findViewById(R.id.activityTitle);
         activityTitle.setText(getIntent().getStringExtra("listName"));
 
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.listTodo);
         helper = new SQLiteHelperMine(this, null, null, 1);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -52,7 +49,8 @@ public class ToDoListActivity extends AppCompatActivity {
     }
 
     public void printDB() {
-        listView.setAdapter(helper.readFromDB(this));
+        CustumAdapter custumAdapter = new CustumAdapter(helper.readFromDB());
+        listView.setAdapter(custumAdapter);
     }
 
     @Override
@@ -98,12 +96,7 @@ public class ToDoListActivity extends AppCompatActivity {
             final TextView title = view.findViewById(R.id.todoName);
             title.setText(todoList.get(i));
             RadioButton button = view.findViewById(R.id.radioButton);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listSelected(title.getText().toString());
-                }
-            });
+            button.setChecked(new Random().nextBoolean());
             return view;
         }
 
