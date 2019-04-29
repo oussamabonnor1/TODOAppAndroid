@@ -2,9 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="85dp"
-    android:background="@drawable/list_item_background"
+    android:background="@drawable/list_item_background_blue"
     android:elevation="4dp"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:id="@+id/itemBackground">
 
     <TextView
         android:id="@+id/todoName"

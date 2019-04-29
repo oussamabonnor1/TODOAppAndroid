@@ -1,5 +1,6 @@
 package com.miamme.jetlightstudio.foodapp.Controllers;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,11 +37,13 @@ public class ToDoListActivity extends AppCompatActivity {
         //naming the activity
         activityTitle = (TextView) findViewById(R.id.activityTitle);
         activityTitle.setText(getIntent().getStringExtra("listName"));
+        //getting list color
+        String color = getIntent().getStringExtra("listColor");
 
         addTask = (EditText) findViewById(R.id.editTextAddTask);
 
         listView = (ListView) findViewById(R.id.listTodo);
-        manager = new DataBaseManager(getApplicationContext(), activityTitle.getText().toString());
+        manager = new DataBaseManager(getApplicationContext(), activityTitle.getText().toString(), color);
         System.out.println(manager);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -103,6 +107,18 @@ public class ToDoListActivity extends AppCompatActivity {
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.task_todo_item, null);
+
+            //region setting background color
+            RelativeLayout layout = view.findViewById(R.id.itemBackground);
+            String color = todoList.get(i).getColor();
+            if (color.matches("blue"))
+                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
+            else if (color.matches("green"))
+                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_green));
+            else
+                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_violet));
+            //endregion
+
             final TextView title = view.findViewById(R.id.todoName);
             title.setText(todoList.get(i).getTaskName());
             RadioButton button = view.findViewById(R.id.radioButton);

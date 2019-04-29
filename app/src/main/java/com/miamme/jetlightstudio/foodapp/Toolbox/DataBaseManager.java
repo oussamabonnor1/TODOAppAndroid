@@ -16,9 +16,12 @@ public class DataBaseManager {
     String dbTableName = "task";
     String dbColumnStatus = "status";
     String dbColumnName = "taskName";
+    String color;
 
-    public DataBaseManager(Context context, String dbTableName) {
+    public DataBaseManager(Context context, String dbTableName, String color) {
         this.dbTableName = dbTableName;
+        this.color = color;
+
         SQLiteManager.dbTableName = dbTableName;
         manager = new SQLiteManager(context);
         database = manager.getWritableDatabase();
@@ -47,7 +50,7 @@ public class DataBaseManager {
         while (!c.isAfterLast()) {
             if (c.getString(c.getColumnIndex(dbColumnName)) != null) {
                 TodoItem item = new TodoItem(c.getString(c.getColumnIndex(dbColumnName)),
-                        Boolean.getBoolean(c.getString(c.getColumnIndex(dbColumnStatus))));
+                        Boolean.getBoolean(c.getString(c.getColumnIndex(dbColumnStatus))), color);
                 tastksTemp.add(item);
             }
             c.moveToNext();

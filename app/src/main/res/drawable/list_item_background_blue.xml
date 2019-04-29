@@ -15,7 +15,7 @@
             <corners
                 android:bottomLeftRadius="10dp"
                 android:topLeftRadius="10dp" />
-            <solid android:color="@color/colorButtons"/>
+            <solid android:color="@color/colorBlue"/>
         </shape>
     </item>
 

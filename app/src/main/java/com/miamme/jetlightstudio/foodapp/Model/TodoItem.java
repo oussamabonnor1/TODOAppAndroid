@@ -3,10 +3,12 @@ package com.miamme.jetlightstudio.foodapp.Model;
 public class TodoItem {
     String taskName;
     boolean status;
+    String color;
 
-    public TodoItem(String taskName, boolean status) {
+    public TodoItem(String taskName, boolean status, String color) {
         this.taskName = taskName;
         this.status = status;
+        this.color = color;
     }
 
     public String getTaskName() {
@@ -23,5 +25,13 @@ public class TodoItem {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }
