@@ -16,13 +16,14 @@ import android.widget.Toast;
 
 import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
 import com.miamme.jetlightstudio.foodapp.R;
-import com.miamme.jetlightstudio.foodapp.Toolbox.SQLiteToDoTable;
+import com.miamme.jetlightstudio.foodapp.Toolbox.DataBaseManager;
+import com.miamme.jetlightstudio.foodapp.Toolbox.SQLiteManager;
 
 import java.util.ArrayList;
 
 public class ToDoListActivity extends AppCompatActivity {
 
-    SQLiteToDoTable helper;
+    DataBaseManager manager;
     ListView listView;
     TextView activityTitle;
     EditText addTask;
@@ -38,11 +39,12 @@ public class ToDoListActivity extends AppCompatActivity {
         addTask = (EditText) findViewById(R.id.editTextAddTask);
 
         listView = (ListView) findViewById(R.id.listTodo);
-        helper = new SQLiteToDoTable(this, null, null, 1);
+        manager = new DataBaseManager(getApplicationContext(), activityTitle.getText().toString());
+        System.out.println(manager);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                helper.removeTask(listView.getAdapter().getItem(position).toString());
+                manager.removeTask(listView.getAdapter().getItem(position).toString());
                 printDB();
                 return false;
             }
@@ -51,12 +53,12 @@ public class ToDoListActivity extends AppCompatActivity {
     }
 
     public void addTask(View v) {
-        helper.addTask(false, addTask.getText().toString());
+        manager.addTask(false, addTask.getText().toString());
         printDB();
     }
 
     public void printDB() {
-        CustumAdapter custumAdapter = new CustumAdapter(helper.readFromDB());
+        CustumAdapter custumAdapter = new CustumAdapter(manager.readFromDB());
         listView.setAdapter(custumAdapter);
         addTask.setText("");
     }
