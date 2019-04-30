@@ -1,8 +1,15 @@
 package com.miamme.jetlightstudio.foodapp.Controllers;
 
+import android.annotation.SuppressLint;
+import android.content.res.ColorStateList;
+import android.content.res.XmlResourceParser;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +27,8 @@ import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
 import com.miamme.jetlightstudio.foodapp.R;
 import com.miamme.jetlightstudio.foodapp.Toolbox.DataBaseManager;
 import com.miamme.jetlightstudio.foodapp.Toolbox.SQLiteManager;
+
+import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
 
@@ -108,21 +117,39 @@ public class ToDoListActivity extends AppCompatActivity {
         public View getView(int i, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.task_todo_item, null);
 
-            //region setting background color
-            RelativeLayout layout = view.findViewById(R.id.itemBackground);
-            String color = todoList.get(i).getColor();
-            if (color.matches("blue"))
-                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
-            else if (color.matches("green"))
-                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_green));
-            else
-                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_violet));
-            //endregion
-
             final TextView title = view.findViewById(R.id.todoName);
             title.setText(todoList.get(i).getTaskName());
-            RadioButton button = view.findViewById(R.id.radioButton);
+            AppCompatRadioButton button = view.findViewById(R.id.radioButton);
             button.setChecked(todoList.get(i).isStatus());
+
+            //region the fucking shit i do to get procedurally generated stuff -.-
+            int[][] states = new int[][]{
+                    new int[]{-android.R.attr.state_checked}, //disabled
+                    new int[]{android.R.attr.state_checked} //enabled
+            };
+            @SuppressLint("ResourceType") int[] colorBlue = new int[]{Color.parseColor(getString(R.color.colorBlue)),
+                    Color.parseColor(getString(R.color.colorBlue))};
+            @SuppressLint("ResourceType") int[] colorGreen = new int[]{Color.parseColor(getString(R.color.colorGreen)),
+                    Color.parseColor(getString(R.color.colorGreen))};
+            @SuppressLint("ResourceType") int[] colorViolet = new int[]{Color.parseColor(getString(R.color.colorViolet)),
+                    Color.parseColor(getString(R.color.colorViolet))};
+            //endregion
+
+            //region setting UI colors
+            RelativeLayout layout = view.findViewById(R.id.itemBackground);
+            String color = todoList.get(i).getColor();
+            if (color.matches("blue")) {
+                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
+                button.setButtonTintList(new ColorStateList(states, colorBlue));
+            } else if (color.matches("green")) {
+                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_green));
+                button.setButtonTintList(new ColorStateList(states, colorGreen));
+            } else {
+                layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_violet));
+                button.setButtonTintList(new ColorStateList(states, colorViolet));
+            }
+            //endregion
+
             return view;
         }
 
