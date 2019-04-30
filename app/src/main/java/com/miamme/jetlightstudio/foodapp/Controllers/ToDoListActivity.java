@@ -14,8 +14,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -114,7 +116,7 @@ public class ToDoListActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
+        public View getView(final int i, View view, ViewGroup viewGroup) {
             view = getLayoutInflater().inflate(R.layout.task_todo_item, null);
 
             final TextView title = view.findViewById(R.id.todoName);
@@ -138,6 +140,7 @@ public class ToDoListActivity extends AppCompatActivity {
             //region setting UI colors
             RelativeLayout layout = view.findViewById(R.id.itemBackground);
             String color = todoList.get(i).getColor();
+            final String taskName = todoList.get(i).getTaskName();
             if (color.matches("blue")) {
                 layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
                 button.setButtonTintList(new ColorStateList(states, colorBlue));
@@ -150,10 +153,18 @@ public class ToDoListActivity extends AppCompatActivity {
             }
             //endregion
 
+            button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    itemChecked(b, taskName);
+                }
+            });
+
             return view;
         }
 
-        void listSelected(String listName) {
+        void itemChecked(boolean taskStatus, String taskName) {
+            manager.updateTask(taskStatus, taskName);
         }
     }
 }

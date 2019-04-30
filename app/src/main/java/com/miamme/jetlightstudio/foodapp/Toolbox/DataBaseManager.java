@@ -41,6 +41,12 @@ public class DataBaseManager {
         database.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbColumnName + "=\"" + taskName + "\";");
     }
 
+    public void updateTask(Boolean taskStatus, String taskName) {
+        ContentValues values = new ContentValues();
+        values.put(dbColumnStatus, taskStatus);
+        database.update(dbTableName, values, dbColumnName + " = '" + taskName + "'", null);
+    }
+
     public ArrayList<TodoItem> readFromDB() {
         ArrayList<TodoItem> tastksTemp = new ArrayList<>();
         String query = "SELECT * FROM " + dbTableName;
@@ -50,7 +56,8 @@ public class DataBaseManager {
         while (!c.isAfterLast()) {
             if (c.getString(c.getColumnIndex(dbColumnName)) != null) {
                 TodoItem item = new TodoItem(c.getString(c.getColumnIndex(dbColumnName)),
-                        Boolean.getBoolean(c.getString(c.getColumnIndex(dbColumnStatus))), color);
+                        c.getInt(c.getColumnIndex(dbColumnStatus)) == 1, color);
+
                 tastksTemp.add(item);
             }
             c.moveToNext();

@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".Controllers.ToDoListActivity"
-            android:label="tasks"
+            android:label="Tasks"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>

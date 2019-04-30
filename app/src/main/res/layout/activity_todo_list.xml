@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:weightSum="1"
     tools:context="com.miamme.jetlightstudio.foodapp.Controllers.ToDoListActivity">
@@ -38,6 +39,8 @@
             android:layout_height="0dp"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
+            android:nextFocusUp="@id/editTextAddTask"
+            android:nextFocusLeft="@id/editTextAddTask"
             android:layout_weight=".1"
             android:hint="Add task..."
             android:textColor="@color/colorText" />
