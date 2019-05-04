@@ -55,7 +55,6 @@ public class ToDoListActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listTodo);
         manager = new DataBaseManager(getApplicationContext(), activityTitle.getText().toString(), color);
-        System.out.println(manager);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {

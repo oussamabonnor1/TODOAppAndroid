@@ -12,7 +12,10 @@ import java.util.ArrayList;
 public class DataBaseManager {
 
     SQLiteDatabase database;
-    SQLiteManager manager;
+    SQLiteManager sqLiteManager;
+    APIManager apiManager;
+    Context context;
+
     String dbTableName = "task";
     String dbColumnStatus = "status";
     String dbColumnName = "taskName";
@@ -21,10 +24,12 @@ public class DataBaseManager {
     public DataBaseManager(Context context, String dbTableName, String color) {
         this.dbTableName = dbTableName;
         this.color = color;
+        this.context = context;
+        apiManager = new APIManager();
 
         SQLiteManager.dbTableName = dbTableName;
-        manager = new SQLiteManager(context);
-        database = manager.getWritableDatabase();
+        sqLiteManager = new SQLiteManager(context);
+        database = sqLiteManager.getWritableDatabase();
         String query = "Create Table IF NOT EXISTS " + dbTableName +
                 " (" + dbColumnStatus + " Boolean, " + dbColumnName + " Text " + ");";
         database.execSQL(query);
@@ -48,20 +53,24 @@ public class DataBaseManager {
     }
 
     public ArrayList<TodoItem> readFromDB() {
-        ArrayList<TodoItem> tastksTemp = new ArrayList<>();
-        String query = "SELECT * FROM " + dbTableName;
-        Cursor c = database.query(dbTableName, new String[]{dbColumnName, dbColumnStatus}, null, null, null, null, null);
-        c.moveToFirst();
+        if (APIManager.isNetworkAvailable(context)) {
+            apiManager.execute("http://6ea5e8cc.ngrok.io", "/Api/Todo");
+            return new ArrayList<>();
+        } else {
+            ArrayList<TodoItem> tastksTemp = new ArrayList<>();
+            Cursor c = database.query(dbTableName, new String[]{dbColumnName, dbColumnStatus}, null, null, null, null, null);
+            c.moveToFirst();
 
-        while (!c.isAfterLast()) {
-            if (c.getString(c.getColumnIndex(dbColumnName)) != null) {
-                TodoItem item = new TodoItem(c.getString(c.getColumnIndex(dbColumnName)),
-                        c.getInt(c.getColumnIndex(dbColumnStatus)) == 1, color);
+            while (!c.isAfterLast()) {
+                if (c.getString(c.getColumnIndex(dbColumnName)) != null) {
+                    TodoItem item = new TodoItem(c.getString(c.getColumnIndex(dbColumnName)),
+                            c.getInt(c.getColumnIndex(dbColumnStatus)) == 1, color);
 
-                tastksTemp.add(item);
+                    tastksTemp.add(item);
+                }
+                c.moveToNext();
             }
-            c.moveToNext();
+            return tastksTemp;
         }
-        return tastksTemp;
     }
 }
