@@ -15,17 +15,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpCookie;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class APIManager extends AsyncTask<String, Void, Void> {
-    String data;
+public class APIManager extends AsyncTask<String, Void, ArrayList<TodoItem>> {
+    String data = "";
 
     @Override
-    protected Void doInBackground(String... strings) {
+    protected ArrayList<TodoItem> doInBackground(String... strings) {
         try {
             String path = strings[1];
             URL url = new URL(strings[0] + path);
@@ -35,32 +33,33 @@ public class APIManager extends AsyncTask<String, Void, Void> {
             String s = "";
             while (s != null) {
                 s = bufferedReader.readLine();
-                data += s;
+                System.out.println("s is: " + s);
+                if (s != null && data != null) data = data.concat(s);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
+    protected void onPostExecute(ArrayList<TodoItem> todoItems) {
+        super.onPostExecute(todoItems);
         System.out.println(data);
-        /*ArrayList<TodoItem> tasks = new ArrayList<>();
         if (data != null) {
             try {
+                System.out.println("todoitems");
                 data = data.replace("null", "");
                 JSONArray jsonArray = new JSONArray(data);
-                JSONObject json = (JSONObject) jsonArray.get(0);
-                tasks.add(new TodoItem(json.getString("taskName"), json.getBoolean("status"), "blue"));
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject json = (JSONObject) jsonArray.get(i);
+                    todoItems.add(new TodoItem(json.getString("taskName"), json.getBoolean("status"), "blue"));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else {
-            //TODO: bring shit form Database here
-        }*/
+        }
     }
 
     public static boolean isNetworkAvailable(Context context) {

@@ -1,5 +1,6 @@
 package com.miamme.jetlightstudio.foodapp.Toolbox;
 
+import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class DataBaseManager {
 
@@ -52,25 +54,30 @@ public class DataBaseManager {
         database.update(dbTableName, values, dbColumnName + " = '" + taskName + "'", null);
     }
 
-    public ArrayList<TodoItem> readFromDB() {
+    public ArrayList<TodoItem> readFromDB() throws ExecutionException, InterruptedException {
         if (APIManager.isNetworkAvailable(context)) {
-            apiManager.execute("http://6ea5e8cc.ngrok.io", "/Api/Todo");
-            return new ArrayList<>();
-        } else {
-            ArrayList<TodoItem> tastksTemp = new ArrayList<>();
-            Cursor c = database.query(dbTableName, new String[]{dbColumnName, dbColumnStatus}, null, null, null, null, null);
-            c.moveToFirst();
+            apiManager.execute("http://7a5b2443.ngrok.io", "/Api/Todo");
+            System.out.println("Read");
+            ArrayList<TodoItem> todoItems = apiManager.get();
+            if (todoItems != null) return apiManager.get();
+            else readinLocalDB();
+        } else readinLocalDB();
+        return null;
+    }
 
-            while (!c.isAfterLast()) {
-                if (c.getString(c.getColumnIndex(dbColumnName)) != null) {
-                    TodoItem item = new TodoItem(c.getString(c.getColumnIndex(dbColumnName)),
-                            c.getInt(c.getColumnIndex(dbColumnStatus)) == 1, color);
+    public ArrayList<TodoItem> readinLocalDB() {
+        ArrayList<TodoItem> tastksTemp = new ArrayList<>();
+        Cursor c = database.query(dbTableName, new String[]{dbColumnName, dbColumnStatus}, null, null, null, null, null);
+        c.moveToFirst();
 
-                    tastksTemp.add(item);
-                }
-                c.moveToNext();
+        while (!c.isAfterLast()) {
+            if (c.getString(c.getColumnIndex(dbColumnName)) != null) {
+                TodoItem item = new TodoItem(c.getString(c.getColumnIndex(dbColumnName)),
+                        c.getInt(c.getColumnIndex(dbColumnStatus)) == 1, color);
+                tastksTemp.add(item);
             }
-            return tastksTemp;
+            c.moveToNext();
         }
+        return tastksTemp;
     }
 }

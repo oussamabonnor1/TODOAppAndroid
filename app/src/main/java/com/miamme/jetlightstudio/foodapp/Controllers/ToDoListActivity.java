@@ -33,6 +33,7 @@ import com.miamme.jetlightstudio.foodapp.Toolbox.SQLiteManager;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class ToDoListActivity extends AppCompatActivity {
 
@@ -59,19 +60,31 @@ public class ToDoListActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 manager.removeTask(listView.getAdapter().getItem(position).toString());
-                printDB();
+                try {
+                    printDB();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 return false;
             }
         });
-        printDB();
+        try {
+            printDB();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void addTask(View v) {
+    public void addTask(View v) throws ExecutionException, InterruptedException {
         manager.addTask(false, addTask.getText().toString());
         printDB();
     }
 
-    public void printDB() {
+    public void printDB() throws ExecutionException, InterruptedException {
         CustumAdapter custumAdapter = new CustumAdapter(manager.readFromDB());
         listView.setAdapter(custumAdapter);
         addTask.setText("");
