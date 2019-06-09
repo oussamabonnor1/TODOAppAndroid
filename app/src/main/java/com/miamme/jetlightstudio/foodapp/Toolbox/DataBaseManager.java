@@ -18,6 +18,7 @@ public class DataBaseManager {
     Context context;
 
     String dbTableName = "task";
+    String dbColumnId = "id";
     String dbColumnStatus = "status";
     String dbColumnName = "taskName";
     String color;
@@ -32,30 +33,35 @@ public class DataBaseManager {
         sqLiteManager = new SQLiteManager(context);
         database = sqLiteManager.getWritableDatabase();
         String query = "Create Table IF NOT EXISTS " + dbTableName +
-                " (" + dbColumnStatus + " Boolean, " + dbColumnName + " Text " + ");";
+                " ("
+                + dbColumnId + " Integer, "
+                + dbColumnStatus + " Boolean, "
+                + dbColumnName + " Text "
+                + ");";
         database.execSQL(query);
     }
 
-    public void addTask(boolean status, String taskName) {
+    public void addTask(int id, boolean status, String taskName) {
         ContentValues value = new ContentValues();
+        value.put(dbColumnId, id);
         value.put(dbColumnStatus, status);
         value.put(dbColumnName, taskName);
         database.insert(dbTableName, null, value);
     }
 
-    public void removeTask(String taskName) {
-        database.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbColumnName + "=\"" + taskName + "\";");
+    public void removeTask(int id) {
+        database.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbColumnId + "=" + id + ";");
     }
 
-    public void updateTask(Boolean taskStatus, String taskName) {
+    public void updateTask(Boolean taskStatus, int id) {
         ContentValues values = new ContentValues();
         values.put(dbColumnStatus, taskStatus);
-        database.update(dbTableName, values, dbColumnName + " = '" + taskName + "'", null);
+        database.update(dbTableName, values, dbColumnId + " = " + id + "", null);
     }
 
     public ArrayList<TodoItem> readFromDB() throws ExecutionException, InterruptedException {
         if (APIManager.isNetworkAvailable(context)) {
-            apiManager.execute("GET", "http://c1d15397.ngrok.io", "/api/todo");
+            apiManager.execute("GET", "http://880bd4df.ngrok.io", "/api/todo");
             String data = apiManager.get();
             if (data != null) {
                 System.out.println("it works");
@@ -68,15 +74,17 @@ public class DataBaseManager {
         return null;
     }
 
-    public ArrayList<TodoItem> readinLocalDB() {
+    ArrayList<TodoItem> readinLocalDB() {
         ArrayList<TodoItem> tastksTemp = new ArrayList<>();
-        Cursor c = database.query(dbTableName, new String[]{dbColumnName, dbColumnStatus}, null, null, null, null, null);
+        Cursor c = database.query(dbTableName, new String[]{dbColumnId, dbColumnName, dbColumnStatus}, null, null, null, null, null);
         c.moveToFirst();
 
         while (!c.isAfterLast()) {
             if (c.getString(c.getColumnIndex(dbColumnName)) != null) {
-                TodoItem item = new TodoItem(c.getString(c.getColumnIndex(dbColumnName)),
-                        c.getInt(c.getColumnIndex(dbColumnStatus)) == 1, color);
+                TodoItem item = new TodoItem(c.getInt(c.getColumnIndex(dbColumnId)),
+                        c.getString(c.getColumnIndex(dbColumnName)),
+                        c.getInt(c.getColumnIndex(dbColumnStatus)) == 1,
+                        color);
                 tastksTemp.add(item);
             }
             c.moveToNext();

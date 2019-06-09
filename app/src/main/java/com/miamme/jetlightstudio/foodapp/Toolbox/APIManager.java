@@ -43,7 +43,7 @@ public class APIManager extends AsyncTask<String, Void, String> {
             JSONArray jsonArray = new JSONArray(data);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject json = (JSONObject) jsonArray.get(i);
-                todoItems.add(new TodoItem(json.getString("task"), json.getBoolean("status"), "blue"));
+                todoItems.add(new TodoItem(json.getInt("id"), json.getString("task"), json.getBoolean("status"), "blue"));
             }
         } catch (JSONException e) {
             e.printStackTrace();

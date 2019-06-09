@@ -41,6 +41,7 @@ public class ToDoListActivity extends AppCompatActivity {
     ListView listView;
     TextView activityTitle;
     EditText addTask;
+    int currentBiggerId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +60,11 @@ public class ToDoListActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                manager.removeTask(listView.getAdapter().getItem(position).toString());
+                manager.removeTask(((TodoItem) listView.getAdapter().getItem(position)).getId());
+                //TODO: add DELETE method here
                 try {
                     printDB();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
+                } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
                 return false;
@@ -72,15 +72,14 @@ public class ToDoListActivity extends AppCompatActivity {
         });
         try {
             printDB();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     public void addTask(View v) throws ExecutionException, InterruptedException {
-        manager.addTask(false, addTask.getText().toString());
+        manager.addTask(currentBiggerId, false, addTask.getText().toString());
+        //TODO: Add post method here
         printDB();
     }
 
@@ -152,7 +151,7 @@ public class ToDoListActivity extends AppCompatActivity {
             //region setting UI colors
             RelativeLayout layout = view.findViewById(R.id.itemBackground);
             String color = todoList.get(i).getColor();
-            final String taskName = todoList.get(i).getTaskName();
+            final int taskId = todoList.get(i).getId();
             if (color.matches("blue")) {
                 layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
                 button.setButtonTintList(new ColorStateList(states, colorBlue));
@@ -168,15 +167,16 @@ public class ToDoListActivity extends AppCompatActivity {
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    itemChecked(b, taskName);
+                    itemChecked(b, taskId);
                 }
             });
 
             return view;
         }
 
-        void itemChecked(boolean taskStatus, String taskName) {
-            manager.updateTask(taskStatus, taskName);
+        void itemChecked(boolean taskStatus, int taskId) {
+            manager.updateTask(taskStatus, taskId);
+            //TODO: add PUT method here
         }
     }
 }

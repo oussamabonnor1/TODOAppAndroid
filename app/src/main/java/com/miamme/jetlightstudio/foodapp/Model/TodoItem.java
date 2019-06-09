@@ -1,15 +1,30 @@
 package com.miamme.jetlightstudio.foodapp.Model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 public class TodoItem {
 
+    int id;
     String taskName;
     boolean status;
     String color;
 
-    public TodoItem(String taskName, boolean status, String color) {
+    public TodoItem(int id, String taskName, boolean status, String color) {
+        this.id = id;
         this.taskName = taskName;
         this.status = status;
         this.color = color;
+    }
+
+    //region getters and setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTaskName() {
@@ -34,5 +49,18 @@ public class TodoItem {
 
     public void setColor(String color) {
         this.color = color;
+    }
+    //endregion
+
+    public JSONObject itemToJSON() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", getId());
+            json.put("status", isStatus());
+            json.put("task", getTaskName());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 }
