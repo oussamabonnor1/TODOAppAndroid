@@ -1,6 +1,7 @@
 package com.miamme.jetlightstudio.foodapp.Model;
 
 public class TodoItem {
+
     String taskName;
     boolean status;
     String color;

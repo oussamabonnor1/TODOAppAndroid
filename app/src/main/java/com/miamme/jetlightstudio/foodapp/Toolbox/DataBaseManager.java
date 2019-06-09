@@ -1,6 +1,5 @@
 package com.miamme.jetlightstudio.foodapp.Toolbox;
 
-import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -56,11 +55,15 @@ public class DataBaseManager {
 
     public ArrayList<TodoItem> readFromDB() throws ExecutionException, InterruptedException {
         if (APIManager.isNetworkAvailable(context)) {
-            apiManager.execute("http://7a5b2443.ngrok.io", "/Api/Todo");
-            System.out.println("Read");
-            ArrayList<TodoItem> todoItems = apiManager.get();
-            if (todoItems != null) return apiManager.get();
-            else readinLocalDB();
+            apiManager.execute("GET", "http://c1d15397.ngrok.io", "/api/todo");
+            String data = apiManager.get();
+            if (data != null) {
+                System.out.println("it works");
+                ArrayList<TodoItem> todoItems = apiManager.getTodoItemsList(data);
+                return todoItems;
+            } else {
+                readinLocalDB();
+            }
         } else readinLocalDB();
         return null;
     }

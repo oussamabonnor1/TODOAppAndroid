@@ -11,22 +11,55 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class APIManager extends AsyncTask<String, Void, ArrayList<TodoItem>> {
+public class APIManager extends AsyncTask<String, Void, String> {
     String data = "";
 
     @Override
-    protected ArrayList<TodoItem> doInBackground(String... strings) {
+    protected String doInBackground(String... strings) {
+        if (strings[0].matches("GET")) {
+            GETTodoItems(strings[1], strings[2]);
+        } else if (strings[0].matches("POST")) {
+            POSTTodoItem(strings[1], strings[2], strings[3]);
+        }
+        return data;
+    }
+
+    public ArrayList<TodoItem> getTodoItemsList(String data) {
+        ArrayList<TodoItem> todoItems = new ArrayList<>();
         try {
-            String path = strings[1];
-            URL url = new URL(strings[0] + path);
+            data = data.replace("null", "");
+            JSONArray jsonArray = new JSONArray(data);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject json = (JSONObject) jsonArray.get(i);
+                todoItems.add(new TodoItem(json.getString("task"), json.getBoolean("status"), "blue"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return todoItems;
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    void GETTodoItems(String path, String endpoint) {
+        try {
+            URL url = new URL(path + endpoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             InputStream inputStream = connection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
@@ -39,32 +72,26 @@ public class APIManager extends AsyncTask<String, Void, ArrayList<TodoItem>> {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return new ArrayList<>();
     }
 
+    void POSTTodoItem(String path, String endpoint, String data) {
+        String urlString = path + endpoint; // URL to call
+        OutputStream out = null;
 
-    @Override
-    protected void onPostExecute(ArrayList<TodoItem> todoItems) {
-        super.onPostExecute(todoItems);
-        System.out.println(data);
-        if (data != null) {
-            try {
-                System.out.println("todoitems");
-                data = data.replace("null", "");
-                JSONArray jsonArray = new JSONArray(data);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject json = (JSONObject) jsonArray.get(i);
-                    todoItems.add(new TodoItem(json.getString("taskName"), json.getBoolean("status"), "blue"));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            out = new BufferedOutputStream(urlConnection.getOutputStream());
+
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.write(data);
+            writer.flush();
+            writer.close();
+            out.close();
+
+            urlConnection.connect();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-    }
-
-    public static boolean isNetworkAvailable(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
