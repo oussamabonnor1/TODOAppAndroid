@@ -51,16 +51,4 @@ public class TodoItem {
         this.color = color;
     }
     //endregion
-
-    public JSONObject itemToJSON() {
-        JSONObject json = new JSONObject();
-        try {
-            json.put("id", getId());
-            json.put("status", isStatus());
-            json.put("task", getTaskName());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return json;
-    }
 }

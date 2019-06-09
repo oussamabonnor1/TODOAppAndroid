@@ -4,8 +4,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 
 import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -14,7 +17,7 @@ public class DataBaseManager {
 
     SQLiteDatabase database;
     SQLiteManager sqLiteManager;
-    APIManager apiManager;
+    public APIManager apiManager;
     Context context;
 
     String dbTableName = "task";
@@ -47,6 +50,9 @@ public class DataBaseManager {
         value.put(dbColumnStatus, status);
         value.put(dbColumnName, taskName);
         database.insert(dbTableName, null, value);
+        JSONObject jsonObject = APIManager.itemToJSON(id, status, taskName);
+        apiManager = new APIManager();
+        apiManager.execute("POST", "http://880bd4df.ngrok.io", "/api/todo", jsonObject.toString());
     }
 
     public void removeTask(int id) {
@@ -60,18 +66,16 @@ public class DataBaseManager {
     }
 
     public ArrayList<TodoItem> readFromDB() throws ExecutionException, InterruptedException {
-        if (APIManager.isNetworkAvailable(context)) {
+        if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
             apiManager.execute("GET", "http://880bd4df.ngrok.io", "/api/todo");
             String data = apiManager.get();
-            if (data != null) {
-                System.out.println("it works");
-                ArrayList<TodoItem> todoItems = apiManager.getTodoItemsList(data);
-                return todoItems;
+            if (!data.matches("")) {
+                return apiManager.getTodoItemsList(data);
             } else {
                 readinLocalDB();
             }
         } else readinLocalDB();
-        return null;
+        return new ArrayList<>();
     }
 
     ArrayList<TodoItem> readinLocalDB() {
@@ -90,5 +94,13 @@ public class DataBaseManager {
             c.moveToNext();
         }
         return tastksTemp;
+    }
+
+    public int getCurrentBiggestId() {
+        String query = "SELECT MAX(" + dbColumnId + ") FROM " + dbTableName;
+        Cursor cursor = database.rawQuery(query, null);
+        if (cursor != null)
+            if (cursor.moveToFirst()) return cursor.getInt(0) + 1;
+        return 0;
     }
 }

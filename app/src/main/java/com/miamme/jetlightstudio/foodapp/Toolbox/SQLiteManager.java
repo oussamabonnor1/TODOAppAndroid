@@ -13,6 +13,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
     private static final int dbVersion = 1;
     private static final String dbName = "task.db";
     public static String dbTableName = "task";
+    public static final String dbColumnId = "id";
     public static final String dbColumnStatus = "status";
     public static final String dbColumnName = "taskName";
 
@@ -22,8 +23,13 @@ public class SQLiteManager extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String query = "Create Table " + dbTableName +
-                " (" + dbColumnStatus + " Boolean, " + dbColumnName + " Text " + ");";
+        String query = "Create Table IF NOT EXISTS " + dbTableName +
+                " ("
+                + dbColumnId + " Integer, "
+                + dbColumnStatus + " Boolean, "
+                + dbColumnName + " Text "
+                + ");";
+
         sqLiteDatabase.execSQL(query);
     }
 

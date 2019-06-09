@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Data base</string>
+    <string name="app_name">JetList</string>
     <string-array name="options">
         <item>Food</item>
         <item>Dring</item>

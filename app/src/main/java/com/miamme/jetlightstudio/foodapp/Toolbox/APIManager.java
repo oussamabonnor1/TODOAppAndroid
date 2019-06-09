@@ -32,8 +32,14 @@ public class APIManager extends AsyncTask<String, Void, String> {
             GETTodoItems(strings[1], strings[2]);
         } else if (strings[0].matches("POST")) {
             POSTTodoItem(strings[1], strings[2], strings[3]);
+            GETTodoItems(strings[1], strings[2]);
         }
         return data;
+    }
+
+    @Override
+    protected void onPostExecute(String s) {
+        super.onPostExecute(s);
     }
 
     public ArrayList<TodoItem> getTodoItemsList(String data) {
@@ -66,7 +72,6 @@ public class APIManager extends AsyncTask<String, Void, String> {
             String s = "";
             while (s != null) {
                 s = bufferedReader.readLine();
-                System.out.println("s is: " + s);
                 if (s != null && data != null) data = data.concat(s);
             }
         } catch (IOException e) {
@@ -76,22 +81,32 @@ public class APIManager extends AsyncTask<String, Void, String> {
 
     void POSTTodoItem(String path, String endpoint, String data) {
         String urlString = path + endpoint; // URL to call
-        OutputStream out = null;
 
         try {
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            out = new BufferedOutputStream(urlConnection.getOutputStream());
+            urlConnection.setDoOutput(true);
+            urlConnection.setRequestMethod("POST");
 
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.write(data);
-            writer.flush();
-            writer.close();
+            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
+            out.write(data);
             out.close();
 
             urlConnection.connect();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    public static JSONObject itemToJSON(int id, boolean status, String taskName) {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("status", status);
+            json.put("task", taskName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 }

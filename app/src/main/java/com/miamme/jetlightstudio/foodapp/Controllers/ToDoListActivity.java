@@ -2,11 +2,8 @@ package com.miamme.jetlightstudio.foodapp.Controllers;
 
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
-import android.content.res.XmlResourceParser;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatRadioButton;
@@ -14,13 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,9 +23,6 @@ import android.widget.Toast;
 import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
 import com.miamme.jetlightstudio.foodapp.R;
 import com.miamme.jetlightstudio.foodapp.Toolbox.DataBaseManager;
-import com.miamme.jetlightstudio.foodapp.Toolbox.SQLiteManager;
-
-import org.xmlpull.v1.XmlPullParser;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
@@ -79,13 +71,13 @@ public class ToDoListActivity extends AppCompatActivity {
 
     public void addTask(View v) throws ExecutionException, InterruptedException {
         manager.addTask(currentBiggerId, false, addTask.getText().toString());
-        //TODO: Add post method here
         printDB();
     }
 
     public void printDB() throws ExecutionException, InterruptedException {
-        CustumAdapter custumAdapter = new CustumAdapter(manager.readFromDB());
+        CustomAdapter custumAdapter = new CustomAdapter(manager.readFromDB());
         listView.setAdapter(custumAdapter);
+        currentBiggerId = manager.getCurrentBiggestId();
         addTask.setText("");
     }
 
@@ -104,10 +96,10 @@ public class ToDoListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class CustumAdapter extends BaseAdapter {
+    public class CustomAdapter extends BaseAdapter {
         ArrayList<TodoItem> todoList;
 
-        public CustumAdapter(ArrayList todoList) {
+        CustomAdapter(ArrayList todoList) {
             this.todoList = todoList;
         }
 
