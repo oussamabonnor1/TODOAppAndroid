@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
 
@@ -50,32 +51,43 @@ public class DataBaseManager {
         value.put(dbColumnStatus, status);
         value.put(dbColumnName, taskName);
         database.insert(dbTableName, null, value);
-        JSONObject jsonObject = APIManager.itemToJSON(id, status, taskName);
         apiManager = new APIManager();
-        apiManager.execute("POST", "http://880bd4df.ngrok.io", "/api/todo", jsonObject.toString());
+        if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
+            JSONObject jsonObject = APIManager.itemToJSON(id, status, taskName);
+            apiManager.execute("POST", "http://5924649e.ngrok.io", "/api/todo", jsonObject.toString());
+        }
     }
 
     public void removeTask(int id) {
         database.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbColumnId + "=" + id + ";");
     }
 
-    public void updateTask(Boolean taskStatus, int id) {
+    public void updateTask(Boolean taskStatus, int id, String taskName) {
         ContentValues values = new ContentValues();
         values.put(dbColumnStatus, taskStatus);
-        database.update(dbTableName, values, dbColumnId + " = " + id + "", null);
+        values.put(dbColumnName, taskName);
+        database.update(dbTableName, values, dbColumnId + " = " + id, null);
+        apiManager = new APIManager();
+        if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
+            JSONObject jsonObject = APIManager.itemToJSON(id, taskStatus, taskName);
+            apiManager.execute("PUT", "http://5924649e.ngrok.io", "/api/todo/" + id, jsonObject.toString());
+        }
     }
 
-    public ArrayList<TodoItem> readFromDB() throws ExecutionException, InterruptedException {
-        if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
-            apiManager.execute("GET", "http://880bd4df.ngrok.io", "/api/todo");
+    public ArrayList<TodoItem> readFromDB(boolean updateFromServer) throws ExecutionException, InterruptedException {
+        apiManager = new APIManager();
+        if (updateFromServer && APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
+            apiManager.execute("GET", "http://5924649e.ngrok.io", "/api/todo");
             String data = apiManager.get();
             if (!data.matches("")) {
+                Log.e("Result", "GET response " + data);
                 return apiManager.getTodoItemsList(data);
             } else {
-                readinLocalDB();
+                return readinLocalDB();
             }
-        } else readinLocalDB();
-        return new ArrayList<>();
+        } else {
+            return readinLocalDB();
+        }
     }
 
     ArrayList<TodoItem> readinLocalDB() {

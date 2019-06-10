@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.miamme.jetlightstudio.foodapp.Model.TodoItem;
 
@@ -20,6 +21,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -29,10 +32,14 @@ public class APIManager extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... strings) {
         if (strings[0].matches("GET")) {
+            Log.e("operation", "sending GET");
             GETTodoItems(strings[1], strings[2]);
         } else if (strings[0].matches("POST")) {
+            Log.e("operation", "sending POST");
             POSTTodoItem(strings[1], strings[2], strings[3]);
-            GETTodoItems(strings[1], strings[2]);
+        } else if (strings[0].matches("PUT")) {
+            Log.e("operation", "sending PUT");
+            PUTTodoItem(strings[1], strings[2], strings[3]);
         }
         return data;
     }
@@ -80,20 +87,47 @@ public class APIManager extends AsyncTask<String, Void, String> {
     }
 
     void POSTTodoItem(String path, String endpoint, String data) {
-        String urlString = path + endpoint; // URL to call
 
         try {
-            URL url = new URL(urlString);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestMethod("POST");
+            URL obj = new URL(path + endpoint);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            Log.e("Result", "Post data:" + data);
+            writer.write(data);
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode = con.getResponseCode();
+            Log.e("Result", "Post Response Code :: " + responseCode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-            OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());
-            out.write(data);
-            out.close();
+    void PUTTodoItem(String path, String endpoint, String data) {
 
-            urlConnection.connect();
-        } catch (Exception e) {
+        try {
+            URL obj = new URL(path + endpoint);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("PUT");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            Log.e("Result", "PUT data:" + data);
+            writer.write(data);
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode = con.getResponseCode();
+            Log.e("Result", "Put Response Code :: " + responseCode);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

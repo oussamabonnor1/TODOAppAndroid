@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,7 +56,7 @@ public class ToDoListActivity extends AppCompatActivity {
                 manager.removeTask(((TodoItem) listView.getAdapter().getItem(position)).getId());
                 //TODO: add DELETE method here
                 try {
-                    printDB();
+                    printDB(false);
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -63,19 +64,20 @@ public class ToDoListActivity extends AppCompatActivity {
             }
         });
         try {
-            printDB();
+            printDB(true);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     public void addTask(View v) throws ExecutionException, InterruptedException {
+        currentBiggerId = manager.getCurrentBiggestId();
         manager.addTask(currentBiggerId, false, addTask.getText().toString());
-        printDB();
+        printDB(false);
     }
 
-    public void printDB() throws ExecutionException, InterruptedException {
-        CustomAdapter custumAdapter = new CustomAdapter(manager.readFromDB());
+    public void printDB(boolean updateFromServer) throws ExecutionException, InterruptedException {
+        CustomAdapter custumAdapter = new CustomAdapter(manager.readFromDB(updateFromServer));
         listView.setAdapter(custumAdapter);
         currentBiggerId = manager.getCurrentBiggestId();
         addTask.setText("");
@@ -144,6 +146,7 @@ public class ToDoListActivity extends AppCompatActivity {
             RelativeLayout layout = view.findViewById(R.id.itemBackground);
             String color = todoList.get(i).getColor();
             final int taskId = todoList.get(i).getId();
+            final String taskName = todoList.get(i).getTaskName();
             if (color.matches("blue")) {
                 layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
                 button.setButtonTintList(new ColorStateList(states, colorBlue));
@@ -159,16 +162,20 @@ public class ToDoListActivity extends AppCompatActivity {
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    itemChecked(b, taskId);
+                    itemChecked(b, taskId, taskName);
                 }
             });
 
             return view;
         }
 
-        void itemChecked(boolean taskStatus, int taskId) {
-            manager.updateTask(taskStatus, taskId);
-            //TODO: add PUT method here
+        void itemChecked(boolean taskStatus, int taskId, String taskName) {
+            manager.updateTask(taskStatus, taskId, taskName);
+            try {
+                printDB(false);
+            } catch (ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
