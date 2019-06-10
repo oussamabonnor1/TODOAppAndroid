@@ -21,6 +21,7 @@ public class DataBaseManager {
     public APIManager apiManager;
     Context context;
 
+    String url = "http://e7af63d8.ngrok.io";
     String dbTableName = "task";
     String dbColumnId = "id";
     String dbColumnStatus = "status";
@@ -54,7 +55,7 @@ public class DataBaseManager {
         apiManager = new APIManager();
         if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
             JSONObject jsonObject = APIManager.itemToJSON(id, status, taskName);
-            apiManager.execute("POST", "http://5924649e.ngrok.io", "/api/todo", jsonObject.toString());
+            apiManager.execute("POST", url, "/api/todo", jsonObject.toString());
         }
     }
 
@@ -70,14 +71,14 @@ public class DataBaseManager {
         apiManager = new APIManager();
         if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
             JSONObject jsonObject = APIManager.itemToJSON(id, taskStatus, taskName);
-            apiManager.execute("PUT", "http://5924649e.ngrok.io", "/api/todo/" + id, jsonObject.toString());
+            apiManager.execute("PUT", url + "/api/todo", "/" + id, jsonObject.toString());
         }
     }
 
     public ArrayList<TodoItem> readFromDB(boolean updateFromServer) throws ExecutionException, InterruptedException {
         apiManager = new APIManager();
         if (updateFromServer && APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
-            apiManager.execute("GET", "http://5924649e.ngrok.io", "/api/todo");
+            apiManager.execute("GET", url, "/api/todo");
             String data = apiManager.get();
             if (!data.matches("")) {
                 Log.e("Result", "GET response " + data);

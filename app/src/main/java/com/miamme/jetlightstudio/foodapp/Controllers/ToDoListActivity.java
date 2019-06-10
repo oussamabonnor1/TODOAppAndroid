@@ -7,13 +7,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatRadioButton;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -126,7 +126,7 @@ public class ToDoListActivity extends AppCompatActivity {
 
             final TextView title = view.findViewById(R.id.todoName);
             title.setText(todoList.get(i).getTaskName());
-            AppCompatRadioButton button = view.findViewById(R.id.radioButton);
+            CheckBox button = view.findViewById(R.id.checkButton);
             button.setChecked(todoList.get(i).isStatus());
 
             //region the fucking shit i do to get procedurally generated stuff -.-
