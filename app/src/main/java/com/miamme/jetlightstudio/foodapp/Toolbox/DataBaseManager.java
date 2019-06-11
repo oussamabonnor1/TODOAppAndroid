@@ -26,6 +26,7 @@ public class DataBaseManager {
     String dbColumnId = "id";
     String dbColumnStatus = "status";
     String dbColumnName = "taskName";
+    String dbColumnColor = "color";
     String color;
 
     public DataBaseManager(Context context, String dbTableName, String color) {
@@ -41,20 +42,22 @@ public class DataBaseManager {
                 " ("
                 + dbColumnId + " Integer, "
                 + dbColumnStatus + " Boolean, "
-                + dbColumnName + " Text "
+                + dbColumnName + " Text, "
+                + dbColumnColor + " Text "
                 + ");";
         database.execSQL(query);
     }
 
-    public void addTask(int id, boolean status, String taskName) {
+    public void addTask(int id, boolean status, String taskName, String taskColor) {
         ContentValues value = new ContentValues();
         value.put(dbColumnId, id);
         value.put(dbColumnStatus, status);
         value.put(dbColumnName, taskName);
+        value.put(dbColumnColor, taskColor);
         database.insert(dbTableName, null, value);
         apiManager = new APIManager();
         if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
-            JSONObject jsonObject = APIManager.itemToJSON(id, status, taskName);
+            JSONObject jsonObject = APIManager.itemToJSON(id, status, taskName, taskColor);
             apiManager.execute("POST", url, "/api/todo", jsonObject.toString());
         }
     }
@@ -63,14 +66,14 @@ public class DataBaseManager {
         database.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbColumnId + "=" + id + ";");
     }
 
-    public void updateTask(Boolean taskStatus, int id, String taskName) {
+    public void updateTask(Boolean taskStatus, int id, String taskName, String taskColor) {
         ContentValues values = new ContentValues();
         values.put(dbColumnStatus, taskStatus);
         values.put(dbColumnName, taskName);
         database.update(dbTableName, values, dbColumnId + " = " + id, null);
         apiManager = new APIManager();
         if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
-            JSONObject jsonObject = APIManager.itemToJSON(id, taskStatus, taskName);
+            JSONObject jsonObject = APIManager.itemToJSON(id, taskStatus, taskName, taskColor);
             apiManager.execute("PUT", url + "/api/todo", "/" + id, jsonObject.toString());
         }
     }
@@ -93,7 +96,7 @@ public class DataBaseManager {
 
     ArrayList<TodoItem> readinLocalDB() {
         ArrayList<TodoItem> tastksTemp = new ArrayList<>();
-        Cursor c = database.query(dbTableName, new String[]{dbColumnId, dbColumnName, dbColumnStatus}, null, null, null, null, null);
+        Cursor c = database.query(dbTableName, new String[]{dbColumnId, dbColumnName, dbColumnStatus, dbColumnColor}, null, null, null, null, null);
         c.moveToFirst();
 
         while (!c.isAfterLast()) {
@@ -101,7 +104,7 @@ public class DataBaseManager {
                 TodoItem item = new TodoItem(c.getInt(c.getColumnIndex(dbColumnId)),
                         c.getString(c.getColumnIndex(dbColumnName)),
                         c.getInt(c.getColumnIndex(dbColumnStatus)) == 1,
-                        color);
+                        c.getString(c.getColumnIndex(dbColumnColor)));
                 tastksTemp.add(item);
             }
             c.moveToNext();

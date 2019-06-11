@@ -7,6 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,7 +73,7 @@ public class ToDoListActivity extends AppCompatActivity {
 
     public void addTask(View v) throws ExecutionException, InterruptedException {
         currentBiggerId = manager.getCurrentBiggestId();
-        manager.addTask(currentBiggerId, false, addTask.getText().toString());
+        manager.addTask(0, false, addTask.getText().toString(), "green");
         printDB(false);
     }
 
@@ -147,6 +148,8 @@ public class ToDoListActivity extends AppCompatActivity {
             String color = todoList.get(i).getColor();
             final int taskId = todoList.get(i).getId();
             final String taskName = todoList.get(i).getTaskName();
+            final String taskColor = todoList.get(i).getColor();
+            Log.e("item:",i + " " + color);
             if (color.matches("blue")) {
                 layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
                 button.setButtonTintList(new ColorStateList(states, colorBlue));
@@ -162,15 +165,15 @@ public class ToDoListActivity extends AppCompatActivity {
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    itemChecked(b, taskId, taskName);
+                    itemChecked(b, taskId, taskName, taskColor);
                 }
             });
 
             return view;
         }
 
-        void itemChecked(boolean taskStatus, int taskId, String taskName) {
-            manager.updateTask(taskStatus, taskId, taskName);
+        void itemChecked(boolean taskStatus, int taskId, String taskName, String taskColor) {
+            manager.updateTask(taskStatus, taskId, taskName, taskColor);
             try {
                 printDB(false);
             } catch (ExecutionException | InterruptedException e) {

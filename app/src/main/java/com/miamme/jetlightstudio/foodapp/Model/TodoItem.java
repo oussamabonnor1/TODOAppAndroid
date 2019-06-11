@@ -1,9 +1,5 @@
 package com.miamme.jetlightstudio.foodapp.Model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-
 public class TodoItem {
 
     int id;

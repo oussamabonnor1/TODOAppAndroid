@@ -16,6 +16,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
     public static final String dbColumnId = "id";
     public static final String dbColumnStatus = "status";
     public static final String dbColumnName = "taskName";
+    public static final String dbColumnColor = "color";
 
     public SQLiteManager(Context context) {
         super(context, dbName, null, dbVersion);
@@ -27,7 +28,8 @@ public class SQLiteManager extends SQLiteOpenHelper {
                 " ("
                 + dbColumnId + " Integer, "
                 + dbColumnStatus + " Boolean, "
-                + dbColumnName + " Text "
+                + dbColumnName + " Text, "
+                + dbColumnColor + " Text "
                 + ");";
 
         sqLiteDatabase.execSQL(query);
