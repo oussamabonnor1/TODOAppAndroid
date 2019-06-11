@@ -31,6 +31,7 @@ public class APIManager extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... strings) {
+        data = "";
         if (strings[0].matches("GET")) {
             Log.e("operation", "sending GET");
             GETTodoItems(strings[1], strings[2]);
@@ -40,6 +41,9 @@ public class APIManager extends AsyncTask<String, Void, String> {
         } else if (strings[0].matches("PUT")) {
             Log.e("operation", "sending PUT");
             PUTTodoItem(strings[1], strings[2], strings[3]);
+        } else if (strings[0].matches("DELETE")) {
+            Log.e("operation", "sending DELETE");
+            DELETETodoItem(strings[1], strings[2], strings[3]);
         }
         return data;
     }
@@ -52,7 +56,6 @@ public class APIManager extends AsyncTask<String, Void, String> {
     public ArrayList<TodoItem> getTodoItemsList(String data) {
         ArrayList<TodoItem> todoItems = new ArrayList<>();
         try {
-            data = data.replace("null", "");
             JSONArray jsonArray = new JSONArray(data);
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject json = (JSONObject) jsonArray.get(i);
@@ -127,6 +130,29 @@ public class APIManager extends AsyncTask<String, Void, String> {
             os.close();
             int responseCode = con.getResponseCode();
             Log.e("Result", "Put Response Code :: " + responseCode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void DELETETodoItem(String path, String endpoint, String data) {
+
+        try {
+            URL obj = new URL(path + endpoint);
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("DELETE");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
+            OutputStream os = con.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            Log.e("Result", "DELETE data:" + data);
+            writer.write(data);
+            writer.flush();
+            writer.close();
+            os.close();
+            int responseCode = con.getResponseCode();
+            Log.e("Result", "Delete Response Code :: " + responseCode);
         } catch (IOException e) {
             e.printStackTrace();
         }

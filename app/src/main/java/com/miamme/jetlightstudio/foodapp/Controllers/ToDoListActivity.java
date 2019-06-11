@@ -1,6 +1,7 @@
 package com.miamme.jetlightstudio.foodapp.Controllers;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
@@ -58,7 +59,7 @@ public class ToDoListActivity extends AppCompatActivity {
                 Log.e("item clicked", " oui");
                 manager.removeTask((custumAdapter.todoList.get(position)).getId());
                 try {
-                    printDB(false, false);
+                    printDB(true, true);
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -82,7 +83,8 @@ public class ToDoListActivity extends AppCompatActivity {
         if (updateFromDb) {
             custumAdapter = new CustomAdapter(manager.readFromDB(updateFromServer));
             listView.setAdapter(custumAdapter);
-        } else custumAdapter.notifyDataSetChanged();
+        }
+        custumAdapter.notifyDataSetChanged();
         currentBiggerId = manager.getCurrentBiggestId();
         addTask.setText("");
     }
@@ -100,6 +102,17 @@ public class ToDoListActivity extends AppCompatActivity {
             Toast.makeText(this, "Made by JetLight studio", Toast.LENGTH_LONG).show();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            printDB(true, true);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(custumAdapter.todoList.size());
     }
 
     public class CustomAdapter extends BaseAdapter {
@@ -152,7 +165,6 @@ public class ToDoListActivity extends AppCompatActivity {
             final int taskId = todoList.get(i).getId();
             final String taskName = todoList.get(i).getTaskName();
             final String taskColor = todoList.get(i).getColor();
-            Log.e("item:", i + " " + color);
             if (color.matches("blue")) {
                 layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
                 button.setButtonTintList(new ColorStateList(states, colorBlue));

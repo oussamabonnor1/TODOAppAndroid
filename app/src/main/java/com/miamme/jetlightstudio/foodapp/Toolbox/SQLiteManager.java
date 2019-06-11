@@ -32,6 +32,7 @@ public class SQLiteManager extends SQLiteOpenHelper {
                 + dbColumnColor + " Text "
                 + ");";
 
+
         sqLiteDatabase.execSQL(query);
     }
 
