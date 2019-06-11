@@ -33,6 +33,7 @@ public class ToDoListActivity extends AppCompatActivity {
 
     DataBaseManager manager;
     ListView listView;
+    CustomAdapter custumAdapter;
     TextView activityTitle;
     EditText addTask;
     int currentBiggerId = 0;
@@ -54,10 +55,10 @@ public class ToDoListActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                manager.removeTask(((TodoItem) listView.getAdapter().getItem(position)).getId());
-                //TODO: add DELETE method here
+                Log.e("item clicked", " oui");
+                manager.removeTask((custumAdapter.todoList.get(position)).getId());
                 try {
-                    printDB(false);
+                    printDB(false, false);
                 } catch (ExecutionException | InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -65,7 +66,7 @@ public class ToDoListActivity extends AppCompatActivity {
             }
         });
         try {
-            printDB(true);
+            printDB(true, true);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -74,12 +75,14 @@ public class ToDoListActivity extends AppCompatActivity {
     public void addTask(View v) throws ExecutionException, InterruptedException {
         currentBiggerId = manager.getCurrentBiggestId();
         manager.addTask(0, false, addTask.getText().toString(), "green");
-        printDB(false);
+        printDB(false, true);
     }
 
-    public void printDB(boolean updateFromServer) throws ExecutionException, InterruptedException {
-        CustomAdapter custumAdapter = new CustomAdapter(manager.readFromDB(updateFromServer));
-        listView.setAdapter(custumAdapter);
+    public void printDB(boolean updateFromServer, boolean updateFromDb) throws ExecutionException, InterruptedException {
+        if (updateFromDb) {
+            custumAdapter = new CustomAdapter(manager.readFromDB(updateFromServer));
+            listView.setAdapter(custumAdapter);
+        } else custumAdapter.notifyDataSetChanged();
         currentBiggerId = manager.getCurrentBiggestId();
         addTask.setText("");
     }
@@ -149,7 +152,7 @@ public class ToDoListActivity extends AppCompatActivity {
             final int taskId = todoList.get(i).getId();
             final String taskName = todoList.get(i).getTaskName();
             final String taskColor = todoList.get(i).getColor();
-            Log.e("item:",i + " " + color);
+            Log.e("item:", i + " " + color);
             if (color.matches("blue")) {
                 layout.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.list_item_background_blue));
                 button.setButtonTintList(new ColorStateList(states, colorBlue));
@@ -175,7 +178,7 @@ public class ToDoListActivity extends AppCompatActivity {
         void itemChecked(boolean taskStatus, int taskId, String taskName, String taskColor) {
             manager.updateTask(taskStatus, taskId, taskName, taskColor);
             try {
-                printDB(false);
+                printDB(false, false);
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
             }

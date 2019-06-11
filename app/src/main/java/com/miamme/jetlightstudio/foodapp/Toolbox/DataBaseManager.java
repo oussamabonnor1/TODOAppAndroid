@@ -64,6 +64,11 @@ public class DataBaseManager {
 
     public void removeTask(int id) {
         database.execSQL("DELETE FROM " + dbTableName + " WHERE " + dbColumnId + "=" + id + ";");
+        apiManager = new APIManager();
+        if (APIManager.isNetworkAvailable(context) && apiManager.getStatus() == AsyncTask.Status.PENDING) {
+            JSONObject jsonObject = APIManager.itemToJSON(id, false, "", "");
+            apiManager.execute("DELETE", url + "/api/todo", "/" + id, jsonObject.toString());
+        }
     }
 
     public void updateTask(Boolean taskStatus, int id, String taskName, String taskColor) {
