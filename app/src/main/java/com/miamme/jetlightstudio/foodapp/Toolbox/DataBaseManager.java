@@ -21,7 +21,7 @@ public class DataBaseManager {
     public APIManager apiManager;
     Context context;
 
-    String url = "http://ac402f66.ngrok.io";
+    String url = "http://755a8750.ngrok.io";
     String dbTableName = "task";
     String dbColumnId = "id";
     String dbColumnStatus = "status";

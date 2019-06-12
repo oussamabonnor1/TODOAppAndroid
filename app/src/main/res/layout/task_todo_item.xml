@@ -22,11 +22,10 @@
     <CheckBox
         android:id="@+id/checkButton"
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="80dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="30dp"
-        android:checked="true"
         android:scaleX="1.5"
         android:scaleY="1.5"
         android:translationX="13dp" />
