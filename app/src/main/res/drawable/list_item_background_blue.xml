@@ -10,12 +10,14 @@
             <solid android:color="@color/colorPrimary" />
         </shape>
     </item>
-    <item android:width="10dp" android:id="@+id/thumbnail">
-        <shape android:shape="rectangle" >
+    <item
+        android:width="10dp"
+        android:id="@+id/thumbnail">
+        <shape android:shape="rectangle">
             <corners
                 android:bottomLeftRadius="10dp"
                 android:topLeftRadius="10dp" />
-            <solid android:color="@color/colorBlue"/>
+            <solid android:color="@color/colorBlue" />
         </shape>
     </item>
 
