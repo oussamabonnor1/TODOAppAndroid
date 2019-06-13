@@ -3,7 +3,7 @@
 ![GitHub license](https://img.shields.io/github/license/oussamabonnor1/TODOAppAndroid.svg)
 ![Jetlight studio](https://img.shields.io/badge/Made%20by-Jetlight%20studio-blue.svg?color=082544)
 
-A simple todo app, representing my journey in learning android as well as my first implementation of my own API.
+A simple todo app, representing my journey in learning android as well as my first implementation of my own API : [JetTodoApi](https://github.com/oussamabonnor1/ASP.Net-Core-Web-API).
 
 
 ## Screenshots:
@@ -15,9 +15,6 @@ A simple todo app, representing my journey in learning android as well as my fir
 * Java (logic)
 * XML (design)
 * Paint.Net (Image editting)
-
-## Todo provider (API): 
-[JetTodoApi](https://github.com/oussamabonnor1/ASP.Net-Core-Web-API)
 
 ## TODO:
 
