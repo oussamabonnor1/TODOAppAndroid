@@ -1,13 +1,11 @@
 package com.miamme.jetlightstudio.foodapp.Controllers;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,13 +26,14 @@ import com.miamme.jetlightstudio.foodapp.R;
 import com.miamme.jetlightstudio.foodapp.Toolbox.DataBaseManager;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 public class ToDoListActivity extends AppCompatActivity {
 
     DataBaseManager manager;
     ListView listView;
-    CustomAdapter custumAdapter;
+    CustomAdapter customAdapter;
     TextView activityTitle;
     EditText addTask;
     int currentBiggerId = 0;
@@ -57,7 +56,7 @@ public class ToDoListActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.e("item clicked", " oui");
-                manager.removeTask((custumAdapter.todoList.get(position)).getId());
+                manager.removeTask((customAdapter.todoList.get(position)).getId());
                 try {
                     printDB(true, true);
                 } catch (ExecutionException | InterruptedException e) {
@@ -73,18 +72,41 @@ public class ToDoListActivity extends AppCompatActivity {
         }
     }
 
-    public void addTask(View v) throws ExecutionException, InterruptedException {
-        currentBiggerId = manager.getCurrentBiggestId();
-        manager.addTask(0, false, addTask.getText().toString(), "green");
-        printDB(false, true);
+    public void addTask(View v) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                currentBiggerId = manager.getCurrentBiggestId();
+                int randomInt = new Random().nextInt(3);
+                String color = "";
+                switch (randomInt) {
+                    case 0:
+                        color = "blue";
+                        break;
+                    case 1:
+                        color = "green";
+                        break;
+                    case 2:
+                        color = "violet";
+                        break;
+                }
+                manager.addTask(0, false, addTask.getText().toString(), color);
+                try {
+                    printDB(true, true);
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        runnable.run();
     }
 
     public void printDB(boolean updateFromServer, boolean updateFromDb) throws ExecutionException, InterruptedException {
         if (updateFromDb) {
-            custumAdapter = new CustomAdapter(manager.readFromDB(updateFromServer));
-            listView.setAdapter(custumAdapter);
+            customAdapter = new CustomAdapter(manager.readFromDB(updateFromServer));
+            listView.setAdapter(customAdapter);
         }
-        custumAdapter.notifyDataSetChanged();
+        customAdapter.notifyDataSetChanged();
         currentBiggerId = manager.getCurrentBiggestId();
         addTask.setText("");
     }
@@ -112,13 +134,13 @@ public class ToDoListActivity extends AppCompatActivity {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println(custumAdapter.todoList.size());
+        System.out.println(customAdapter.todoList.size());
     }
 
     public class CustomAdapter extends BaseAdapter {
         ArrayList<TodoItem> todoList;
 
-        CustomAdapter(ArrayList todoList) {
+        CustomAdapter(ArrayList<TodoItem> todoList) {
             this.todoList = todoList;
         }
 
@@ -176,7 +198,6 @@ public class ToDoListActivity extends AppCompatActivity {
                 button.setButtonTintList(new ColorStateList(states, colorViolet));
             }
             //endregion
-
             button.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -187,13 +208,14 @@ public class ToDoListActivity extends AppCompatActivity {
             return view;
         }
 
-        void itemChecked(boolean taskStatus, int taskId, String taskName, String taskColor) {
-            manager.updateTask(taskStatus, taskId, taskName, taskColor);
-            try {
-                printDB(false, false);
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
+        void itemChecked(final boolean taskStatus, final int taskId, final String taskName, final String taskColor) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    manager.updateTask(taskStatus, taskId, taskName, taskColor);
+                }
+            };
+            runnable.run();
         }
     }
 }
